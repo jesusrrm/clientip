@@ -17,11 +17,11 @@ def password = project.findProperty("gcrToken") ?: System.getenv("GCR_TOKEN")
 def dockerImageVersion = "${project.version}-${gitCommitHash}"
 def dockerRegistryUrl = 'ghcr.io'
 def dockerImageName = "${username}/clientip"
-def dockerImageTag = "${dockerRegistryUrl}/${dockerImageName}:${dockerImageVersion}"
+def dockerImageTag = "${dockerRegistryUrl}/${dockerImageName}:${dockerImageVersion}".toLowerCase()
 
 
 java {
-	sourceCompatibility = '21'
+	sourceCompatibility = '17'
 }
 
 application {
@@ -42,7 +42,7 @@ dependencies {
 
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-tiny:latest'
-	imageName= dockerImageTag
+	imageName =  "${dockerRegistryUrl}/${dockerImageName}".toLowerCase()
 }
 
 // task pushToGitHubRegistry(type: DockerPushImage) {
@@ -79,6 +79,8 @@ task loginToDockerRegistry {
 
 task pushDockerImage(type: Exec, dependsOn: bootBuildImage) {
 	dependsOn tasks.named('loginToDockerRegistry')
-    commandLine 'docker', 'push', dockerImageTag
-	commandLine 'docker', 'push', '${dockerRegistryUrl}/${dockerImageName}:latest'
+	    commandLine 'echo', dockerImageTag.toLowerCase()
+
+    commandLine 'docker', 'push', dockerImageTag.toLowerCase()
+	commandLine 'docker', 'push', '${dockerRegistryUrl}/${dockerImageName}:latest'.toLowerCase()
 }
