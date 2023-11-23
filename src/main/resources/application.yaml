@@ -1,0 +1,9 @@
+spring:
+  native:
+    image-agent:
+      enabled: true
+    reflection-config: |
+      -H:IncludeResourceBundles=javax.servlet.http.LocalStrings,\
+      -H:IncludeResourceBundles=javax.servlet.LocalStrings,\
+      -H:ReflectionConfigurationFiles=reflect-config.json
+
