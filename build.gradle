@@ -21,7 +21,7 @@ def dockerImageTag = "${dockerRegistryUrl}/${dockerImageName}:${dockerImageVersi
 
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '21'
 }
 
 application {
@@ -42,7 +42,7 @@ dependencies {
 
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-tiny:latest'
-	imageName =  "${dockerRegistryUrl}/${dockerImageName}".toLowerCase()
+	imageName= dockerImageTag
 }
 
 // task pushToGitHubRegistry(type: DockerPushImage) {
@@ -79,7 +79,7 @@ task loginToDockerRegistry {
 
 task pushDockerImage(type: Exec, dependsOn: bootBuildImage) {
 	dependsOn tasks.named('loginToDockerRegistry')
-	    commandLine 'echo', dockerImageTag.toLowerCase()
+	    commandLine 'echo', 'AAA:', dockerImageTag.toLowerCase()
 
     commandLine 'docker', 'push', dockerImageTag.toLowerCase()
 	commandLine 'docker', 'push', '${dockerRegistryUrl}/${dockerImageName}:latest'.toLowerCase()
