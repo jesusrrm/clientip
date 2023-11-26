@@ -33,16 +33,19 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+// https://mvnrepository.com/artifact/io.projectreactor/reactor-core
+implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.6.0'
+
+
 }
 
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-tiny:latest'
+	
 	imageName= dockerImageTag
+     
 }
 
 // task pushToGitHubRegistry(type: DockerPushImage) {
@@ -79,8 +82,7 @@ task loginToDockerRegistry {
 
 task pushDockerImage(type: Exec, dependsOn: bootBuildImage) {
 	dependsOn tasks.named('loginToDockerRegistry')
-	    commandLine 'echo', 'AAA:', dockerImageTag.toLowerCase()
-
+	commandLine 'echo', 'AAA:', dockerImageTag.toLowerCase()
     commandLine 'docker', 'push', dockerImageTag.toLowerCase()
 	commandLine 'docker', 'push', '${dockerRegistryUrl}/${dockerImageName}:latest'.toLowerCase()
 }
